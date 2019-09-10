@@ -1,0 +1,1 @@
+This project was bootstrapped with [@enact/cli](https://github.com/enactjs/cli).

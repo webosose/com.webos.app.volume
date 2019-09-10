@@ -1,0 +1,52 @@
+{
+	"name": "com.webos.app.volume",
+	"version": "1.0.0",
+	"description": "webOS Volume Control",
+	"author": "",
+	"main": "src/index.js",
+	"scripts": {
+		"serve": "enact serve",
+		"pack": "enact pack",
+		"pack-p": "enact pack -p",
+		"watch": "enact pack --watch",
+		"clean": "enact clean",
+		"lint": "enact lint .",
+		"license": "enact license",
+		"test": "enact test",
+		"test-watch": "enact test --watch"
+	},
+	"license": "UNLICENSED",
+	"private": true,
+	"repository": "",
+	"enact": {
+		"theme": "agate"
+	},
+	"eslintConfig": {
+		"extends": "enact/strict"
+	},
+	"eslintIgnore": [
+		"node_modules/*",
+		"build/*",
+		"dist/*"
+	],
+	"dependencies": {
+		"@enact/agate": "enactjs/agate#develop",
+		"@enact/core": "^3.0.0",
+		"@enact/i18n": "^3.0.0",
+		"@enact/spotlight": "^3.0.0",
+		"@enact/ui": "^3.0.0",
+		"@enact/webos": "^3.0.0",
+		"ilib": "^14.3.0",
+		"immer": "^3.2.0",
+		"prop-types": "^15.6.2",
+		"ramda": "^0.26.1",
+		"react": "^16.8.0",
+		"react-dom": "^16.8.0"
+	},
+	"peerDependencies": {
+		"ilib": "^14.2.0 || ^14.2.0-webostv1"
+	},
+	"devDependencies": {
+		"ilib": "^14.2.0"
+	}
+}
