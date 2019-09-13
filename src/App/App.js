@@ -34,7 +34,6 @@ const AppBase = kind({
 		volumeContainerVisible,
 		...rest
 	}) => {
-		delete rest.onNavigate;
 		return (
 			<div {...rest}>
 				<div className={css.basement} onClick={onHideEverything} />
