@@ -1,6 +1,6 @@
 {
 	"name": "com.webos.app.volume",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "webOS Enact Volume Control",
 	"author": "LG SVL",
 	"main": "src/index.js",
@@ -32,7 +32,7 @@
 		"dist/*"
 	],
 	"dependencies": {
-		"@enact/agate": "enactjs/agate#develop",
+		"@enact/agate": "enactjs/agate#1.0.0-alpha.1",
 		"@enact/core": "^3.0.0",
 		"@enact/i18n": "^3.0.0",
 		"@enact/spotlight": "^3.0.0",
