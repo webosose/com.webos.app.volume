@@ -5,7 +5,7 @@
 	"requires": true,
 	"dependencies": {
 		"@enact/agate": {
-			"version": "github:enactjs/agate#fce98b195e007bbab6863bd97b76722187926088",
+			"version": "github:enactjs/agate#fc0e105afcd6d478d71f60dba9ed2bf6bd40343f",
 			"from": "github:enactjs/agate#1.0.0-alpha.1",
 			"requires": {
 				"@enact/core": "^3.0.0",
@@ -526,13 +526,12 @@
 			}
 		},
 		"cross-env": {
-			"version": "5.2.0",
-			"resolved": "https://registry.npmjs.org/cross-env/-/cross-env-5.2.0.tgz",
-			"integrity": "sha512-jtdNFfFW1hB7sMhr/H6rW1Z45LFqyI431m3qU6bFXcQ3Eh7LtBuG3h74o7ohHZ3crrRkkqHlo4jYHFPcjroANg==",
+			"version": "5.2.1",
+			"resolved": "https://registry.npmjs.org/cross-env/-/cross-env-5.2.1.tgz",
+			"integrity": "sha512-1yHhtcfAd1r4nwQgknowuUNfIT9E8dOMMspC36g45dN+iD1blloi7xp8X/xAIDnjHWyt1uQ8PHk2fkNaym7soQ==",
 			"dev": true,
 			"requires": {
-				"cross-spawn": "^6.0.5",
-				"is-windows": "^1.0.0"
+				"cross-spawn": "^6.0.5"
 			}
 		},
 		"cross-spawn": {
@@ -2090,12 +2089,12 @@
 			}
 		},
 		"nodemon": {
-			"version": "1.18.10",
-			"resolved": "https://registry.npmjs.org/nodemon/-/nodemon-1.18.10.tgz",
-			"integrity": "sha512-we51yBb1TfEvZamFchRgcfLbVYgg0xlGbyXmOtbBzDwxwgewYS/YbZ5tnlnsH51+AoSTTsT3A2E/FloUbtH8cQ==",
+			"version": "1.19.2",
+			"resolved": "https://registry.npmjs.org/nodemon/-/nodemon-1.19.2.tgz",
+			"integrity": "sha512-hRLYaw5Ihyw9zK7NF+9EUzVyS6Cvgc14yh8CAYr38tPxJa6UrOxwAQ351GwrgoanHCF0FalQFn6w5eoX/LGdJw==",
 			"dev": true,
 			"requires": {
-				"chokidar": "^2.1.0",
+				"chokidar": "^2.1.5",
 				"debug": "^3.1.0",
 				"ignore-by-default": "^1.0.1",
 				"minimatch": "^3.0.4",
@@ -2324,30 +2323,31 @@
 			}
 		},
 		"react": {
-			"version": "16.9.0",
-			"resolved": "https://registry.npmjs.org/react/-/react-16.9.0.tgz",
-			"integrity": "sha512-+7LQnFBwkiw+BobzOF6N//BdoNw0ouwmSJTEm9cglOOmsg/TMiFHZLe2sEoN5M7LgJTj9oHH0gxklfnQe66S1w==",
-			"requires": {
-				"loose-envify": "^1.1.0",
-				"object-assign": "^4.1.1",
-				"prop-types": "^15.6.2"
-			}
-		},
-		"react-dom": {
-			"version": "16.9.0",
-			"resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.9.0.tgz",
-			"integrity": "sha512-YFT2rxO9hM70ewk9jq0y6sQk8cL02xm4+IzYBz75CQGlClQQ1Bxq0nhHF6OtSbit+AIahujJgb/CPRibFkMNJQ==",
+			"version": "16.8.6",
+			"resolved": "https://registry.npmjs.org/react/-/react-16.8.6.tgz",
+			"integrity": "sha512-pC0uMkhLaHm11ZSJULfOBqV4tIZkx87ZLvbbQYunNixAAvjnC+snJCg0XQXn9VIsttVsbZP/H/ewzgsd5fxKXw==",
 			"requires": {
 				"loose-envify": "^1.1.0",
 				"object-assign": "^4.1.1",
 				"prop-types": "^15.6.2",
-				"scheduler": "^0.15.0"
+				"scheduler": "^0.13.6"
+			}
+		},
+		"react-dom": {
+			"version": "16.8.6",
+			"resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.8.6.tgz",
+			"integrity": "sha512-1nL7PIq9LTL3fthPqwkvr2zY7phIPjYrT0jp4HjyEQrEROnw4dG41VVwi/wfoCneoleqrNX7iAD+pXebJZwrwA==",
+			"requires": {
+				"loose-envify": "^1.1.0",
+				"object-assign": "^4.1.1",
+				"prop-types": "^15.6.2",
+				"scheduler": "^0.13.6"
 			}
 		},
 		"react-is": {
-			"version": "16.9.0",
-			"resolved": "https://registry.npmjs.org/react-is/-/react-is-16.9.0.tgz",
-			"integrity": "sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw=="
+			"version": "16.8.6",
+			"resolved": "https://registry.npmjs.org/react-is/-/react-is-16.8.6.tgz",
+			"integrity": "sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA=="
 		},
 		"readable-stream": {
 			"version": "2.3.6",
@@ -2466,9 +2466,9 @@
 			"integrity": "sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg=="
 		},
 		"scheduler": {
-			"version": "0.15.0",
-			"resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.15.0.tgz",
-			"integrity": "sha512-xAefmSfN6jqAa7Kuq7LIJY0bwAPG3xlCj0HMEBQk1lxYiDKZscY2xJ5U/61ZTrYbmNQbXa+gc7czPkVo11tnCg==",
+			"version": "0.13.6",
+			"resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.13.6.tgz",
+			"integrity": "sha512-IWnObHt413ucAYKsD9J1QShUKkbKLQQHdxRyw73sw4FN26iWr3DY/H34xGPe4nmL1DwXyWmSWmMrA9TfQbE/XQ==",
 			"requires": {
 				"loose-envify": "^1.1.0",
 				"object-assign": "^4.1.1"
