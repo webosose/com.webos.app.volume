@@ -1,0 +1,31 @@
+@import "~@enact/agate/styles/mixins.less";
+
+.enact-fit {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.app {
+	.transition {
+		pointer-events: none;
+
+		.inner > * {
+			pointer-events: auto;
+		}
+	}
+
+	.volumeContainerTransition {
+		&,
+		.inner {
+			.enact-fit();
+		}
+	}
+
+	.volumeContainerTransition {
+		bottom: auto;
+		height: 600px;
+	}
+}

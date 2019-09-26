@@ -1,0 +1,17 @@
+{
+    "activity": {
+        "name": "system volume app",
+        "description": "Enact System Volume App",
+        "type": { "foreground": true, "continuous": true },
+        "trigger": {
+            "method": "luna://com.webos.service.audio/media/status",
+            "params": { "subscribe": true }
+        },
+        "callback": {
+            "method": "palm://com.webos.service.applicationmanager/launch",
+            "params": { "id": "com.webos.app.volume" }
+        }
+    },
+    "replace": true,
+    "start": true
+}
