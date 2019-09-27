@@ -11,9 +11,9 @@ const mock = action => ({onSuccess = noop, subscribe = false} = {}) => {
 	action.then(res => {
 		if (cancelled) return;
 		if (subscribe) {
-			id = setInterval(() => onSuccess(res), Math.random()*5000 + 5000);
+			id = setInterval(() => onSuccess(res), Math.random() * 5000 + 5000);
 		} else {
-			onSuccess(res)
+			onSuccess(res);
 		}
 	});
 
