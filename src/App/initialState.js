@@ -1,14 +1,16 @@
 export default () => ({
 	// System settings
 	volume: {
+		bluetooth: 0,
+		master: 0,
 		media: 0,
-		message: 0.6,
-		safetyAlert: 0.4
+		soundEffect: 0
 	},
 	// General/Global app settings (view management, general app state, etc)
 	app: {
+		volumeType: process.env.REACT_APP_VOLUME_TYPE,
 		visible: {
-			volumeContainer: false
+			volumeControl: false
 		}
 	}
 });

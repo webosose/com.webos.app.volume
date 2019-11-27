@@ -1,15 +1,10 @@
 @import "~@enact/agate/styles/mixins.less";
 
-.enact-fit {
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-}
-
 .app {
-	background-image: linear-gradient(to bottom right, lighten(red, 20%), lighten(blue, 20%));
+	&.withBackground {
+		background-image:
+			linear-gradient(to bottom right, lighten(red, 20%), lighten(blue, 20%));
+	}
 
 	.transition {
 		pointer-events: none;
@@ -19,24 +14,19 @@
 		}
 	}
 
-	.controls {
-		padding: 70px;
-	}
-
 	.basement {
 		position: absolute;
 		.position(0);
+		background-image: linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.85) 9%, rgba(0, 0, 0, 0.48) 31%, rgba(0, 0, 0, 0) 69%);
 	}
 
-	.volumeContainerTransition {
-		&,
-		.inner {
-			.enact-fit();
+	.control {
+		position: absolute;
+		bottom: 0;
+		padding: 40px;
+
+		& > * {
+			margin: 0;
 		}
-	}
-
-	.volumeContainerTransition {
-		bottom: auto;
-		height: 600px;
 	}
 }

@@ -1,11 +1,5 @@
 const noop = function () {};
 
-const asyncSuccess = ({onSuccess = noop} = {}) => {
-	// Async-invoke a onSuccess callback
-	setTimeout(onSuccess, 1);
-	return {cancel: noop};
-};
-
 const mock = action => ({onSuccess = noop, subscribe = false} = {}) => {
 	let id, cancelled = false;
 	action.then(res => {
@@ -27,36 +21,13 @@ const mock = action => ({onSuccess = noop, subscribe = false} = {}) => {
 
 // Copy all mock app assets to a root output ./mockapps directory
 require.context(
-	'!file-loader?name=mockapps/[folder]/[name].[ext]!./mockdata/assets',
+	'!file-loader?name=mockapps/[folder]/[name].[ext]!./mockdata/',
 	true,
 	/\.png$/
 );
 
 const MockProvider = {
-	// Launch Point
-	addLaunchPoint: mock(import('./mockdata/addLaunchPoint.json')),
-	moveLaunchPoint: asyncSuccess,
-	updateLaunchPoint: asyncSuccess,
-	removeLaunchPoint: asyncSuccess,
-	listLaunchPoints: mock(import('./mockdata/listLaunchPoints.json')), // subscribable
-
-	// Application
-	listApps: mock(import('./mockdata/listApps.json')), // subscribable
-	running: mock(import('./mockdata/running.json')), // subscribable,
-	getForegroundAppInfo: mock(import('./mockdata/getForegroundAppInfo.json')),  // subscribable
-	setOrder: asyncSuccess,
-
-	// Application Handling
-	launch: asyncSuccess,
-	pause: asyncSuccess,
-	close: asyncSuccess,
-	closeByAppId: asyncSuccess,
-
-	// Application Specific
-	getAppInfo: mock(import('./mockdata/getAppInfo.json')),
-	getAppLifeStatus: mock(import('./mockdata/getAppLifeStatus.json')),  // subscribable
-	getAppLifeEvents: mock(import('./mockdata/getAppLifeEvents.json')), // subscribable
-	getAppStatus: mock(import('./mockdata/getAppStatus.json'))
+	getRemoteVolume: mock(() => import('./mockdata/volume.json')) // subscribable
 };
 
 export default MockProvider;

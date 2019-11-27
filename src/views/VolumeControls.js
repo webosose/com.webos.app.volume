@@ -1,42 +1,57 @@
-import kind from '@enact/core/kind';
-import React from 'react';
-import compose from 'ramda/src/compose';
-import PropTypes from 'prop-types';
-
-// import service from '../service';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
+import kind from '@enact/core/kind';
+import PropTypes from 'prop-types';
+import compose from 'ramda/src/compose';
+import React from 'react';
+
 import VolumeControl from '../components/VolumeControl';
 
 import css from './VolumeControls.module.less';
 
 const VolumeControlsBase = kind({
 	name: 'VolumeControls',
+
 	propTypes: {
+		onChangeVolumeBluetooth: PropTypes.func.isRequired,
+		onChangeVolumeMaster: PropTypes.func.isRequired,
+		onChangeVolumeMedia: PropTypes.func.isRequired,
+		onChangeVolumeSoundEffect: PropTypes.func.isRequired,
+		volumeType: PropTypes.string.isRequired,
+		bluetoothVolume: PropTypes.number,
+		masterVolume: PropTypes.number,
 		mediaVolume: PropTypes.number,
-		messageVolume: PropTypes.number,
-		onChangeVolumeMedia: PropTypes.func,
-		onChangeVolumeMessage: PropTypes.func,
-		onChangeVolumeSafetyAlert: PropTypes.func,
-		safetyAlertVolume: PropTypes.number
+		soundEffectVolume: PropTypes.number
 	},
+
 	styles: {
 		css,
 		className: 'volumeControls'
 	},
+
 	render: ({
+		bluetoothVolume,
+		masterVolume,
 		mediaVolume,
-		messageVolume,
+		onChangeVolumeBluetooth,
+		onChangeVolumeMaster,
 		onChangeVolumeMedia,
-		onChangeVolumeMessage,
-		onChangeVolumeSafetyAlert,
-		safetyAlertVolume,
+		onChangeVolumeSoundEffect,
+		soundEffectVolume,
+		volumeType,
 		...rest
 	}) => {
 		return (
 			<div {...rest}>
-				<VolumeControl label="Media" value={mediaVolume} onChange={onChangeVolumeMedia} />
-				<VolumeControl label="Message" value={messageVolume} onChange={onChangeVolumeMessage} />
-				<VolumeControl label="Safety Alert" value={safetyAlertVolume} onChange={onChangeVolumeSafetyAlert} />
+				{volumeType === 'All' ? (
+					<React.Fragment>
+						<VolumeControl label="Master Volume" onChange={onChangeVolumeMaster} value={masterVolume} />
+						<VolumeControl label="Media" onChange={onChangeVolumeMedia} value={mediaVolume} />
+						<VolumeControl label="Sound Effect" onChange={onChangeVolumeSoundEffect} value={soundEffectVolume} />
+						<VolumeControl label="Bluetooth" onChange={onChangeVolumeBluetooth} value={bluetoothVolume} />
+					</React.Fragment>
+				) : (
+					<VolumeControl label="Bluetooth" onChange={onChangeVolumeBluetooth} value={bluetoothVolume} />
+				)}
 			</div>
 		);
 	}
@@ -44,47 +59,34 @@ const VolumeControlsBase = kind({
 
 const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
-		// mount: (props, {update}) => {
-		// 	// Simulate a slow luna call
-		// 	setTimeout(() => {
-		// 		service.listLaunchPoints({
-		// 			subscribe: true,
-		// 			onSuccess: ({launchPoints}) => {
-		// 				update(state => {
-		// 					state.launcher.launchPoints = launchPoints;
-		// 				});
-		// 			}
-		// 		});
-		// 	}, 2000);
-
-		// 	// On unmount, run this returned method
-		// 	return () => {
-		// 		update(state => {
-		// 			state.launcher.launchPoints = [];
-		// 		});
-		// 	};
-		// },
 		handlers: {
+			onChangeVolumeBluetooth: (ev, props, {update}) => {
+				update(state => {
+					state.volume.bluetooth = ev.value;
+				});
+			},
+			onChangeVolumeMaster: (ev, props, {update}) => {
+				update(state => {
+					state.volume.master = ev.value;
+				});
+			},
 			onChangeVolumeMedia: (ev, props, {update}) => {
 				update(state => {
 					state.volume.media = ev.value;
 				});
 			},
-			onChangeVolumeMessage: (ev, props, {update}) => {
+			onChangeVolumeSoundEffect: (ev, props, {update}) => {
 				update(state => {
-					state.volume.message = ev.value;
-				});
-			},
-			onChangeVolumeSafetyAlert: (ev, props, {update}) => {
-				update(state => {
-					state.volume.safetyAlert = ev.value;
+					state.volume.soundEffect = ev.value;
 				});
 			}
 		},
-		mapStateToProps: ({volume}) => ({
+		mapStateToProps: ({app, volume}) => ({
+			bluetoothVolume: volume.bluetooth,
+			masterVolume: volume.master,
 			mediaVolume: volume.media,
-			messageVolume: volume.message,
-			safetyAlertVolume: volume.safetyAlert
+			soundEffectVolume: volume.soundEffect,
+			volumeType: app.volumeType
 		})
 	})
 );

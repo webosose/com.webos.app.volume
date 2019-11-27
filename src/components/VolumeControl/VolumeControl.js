@@ -1,24 +1,19 @@
+import Icon from '@enact/agate/Icon';
+import Slider from '@enact/agate/Slider';
 import kind from '@enact/core/kind';
-import IncrementSlider from '@enact/agate/IncrementSlider';
 import {Row, Cell} from '@enact/ui/Layout';
-import React from 'react';
 import PropTypes from 'prop-types';
-
-import Skinnable from '@enact/agate/Skinnable';
+import React from 'react';
 
 import css from './VolumeControl.module.less';
 
-const VolumeControlBase = kind({
+const VolumeControl = kind({
 	name: 'VolumeControl',
 
 	propTypes: {
-		label: PropTypes.string,
-		value: PropTypes.number  // Between zero and one (0 -> 1)
-	},
-
-	defaultProps: {
-		label: 'Volume',
-		value: 0
+		label: PropTypes.string.isRequired,
+		onChange: PropTypes.func.isRequired,
+		value: PropTypes.number.isRequired
 	},
 
 	styles: {
@@ -26,24 +21,22 @@ const VolumeControlBase = kind({
 		className: 'volumeControl'
 	},
 
-	render: ({label, className, style, value, ...rest}) => {
+	render: ({className, label, onChange, value}) => {
 		return (
-			<Row className={className} style={style}>
-				<Cell component="label" size="30%" className={css.label}>
+			<Row className={className}>
+				<Cell className={css.label} shrink>
 					{label}
 				</Cell>
 				<Cell>
-					<IncrementSlider decrementIcon={value === 0 ? 'volume0' : 'volume1'} incrementIcon="volume2" step={0.1} min={0} max={1} {...rest} value={value} />
+					<Row className={css.labeledSlider}>
+						<Cell className={css.icon} component={Icon} shrink>{value === 0 ? 'volume0' : 'volume1'}</Cell>
+						<Cell className={css.slider} component={Slider} css={css} max={100} min={0} onChange={onChange} step={1} value={value} />
+						<Cell className={css.icon} component={Icon} shrink>volume2</Cell>
+					</Row>
 				</Cell>
 			</Row>
 		);
 	}
 });
 
-const VolumeControl = Skinnable(VolumeControlBase);
-
 export default VolumeControl;
-export {
-	VolumeControl,
-	VolumeControlBase
-};

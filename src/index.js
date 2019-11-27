@@ -1,8 +1,11 @@
 import React from 'react';
 import {render} from 'react-dom';
+
 import App from './App';
 
-const appElement = (<App />);
+const appElement = (
+	<App skin="gallium-day" />
+);
 
 // In a browser environment, render instead of exporting
 if (typeof window !== 'undefined') {

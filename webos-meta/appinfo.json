@@ -8,5 +8,14 @@
 	"icon": "icon.png",
 	"miniicon": "icon-mini.png",
 	"largeIcon": "icon-large.png",
-	"uiRevision": 2
+	"uiRevision": 2,
+	"requiredPermissions": [
+		"all"
+	],
+	"trustLevel": "trusted",
+	"defaultWindowType": "system_ui",
+	"noSplashOnLaunch": true,
+	"spinnerOnLaunch": false,
+	"transparent": true,
+	"visible": false
 }
