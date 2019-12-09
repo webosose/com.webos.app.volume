@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en-KR" trgLang="en-US">
+ <file id="volume_f1" original="volume">
+  <group id="volume_g1" name="javascript">
+   <unit id="volume_1">
+    <segment>
+     <source>Sound Effect</source>
+     <target>Sound Effect</target>
+    </segment>
+   </unit>
+   <unit id="volume_2">
+    <segment>
+     <source>Media</source>
+     <target>Media</target>
+    </segment>
+   </unit>
+   <unit id="volume_3">
+    <segment>
+     <source>Bluetooth</source>
+     <target>Bluetooth</target>
+    </segment>
+   </unit>
+   <unit id="volume_4">
+    <segment>
+     <source>Speaker</source>
+     <target>Speaker</target>
+    </segment>
+   </unit>
+  </group>
+  <group id="volume_g2" name="x-json">
+   <unit id="volume_5">
+    <segment>
+     <source>Enact Volume Control</source>
+     <target>Enact Volume Control</target>
+    </segment>
+   </unit>
+   <unit id="volume_6">
+    <segment>
+     <source>LGE-SWP</source>
+     <target>LGE-SWP</target>
+    </segment>
+   </unit>
+  </group>
+ </file>
+</xliff>
