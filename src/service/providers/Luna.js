@@ -12,15 +12,16 @@ const handler = (callback, map = fwd) => callback && (res => {
 	}
 });
 
-const luna =  (
+const luna = (
+		service,
 		method,
-		{subscribe = false, timeout = 0, ...params} = {},
+		{timeout = 0, ...params} = {},
 		map
 ) => (
-	({onSuccess, onFailure, onTimeout, onComplete, ...additionalParams} = {}) => {
+	({onSuccess, onFailure, onTimeout, onComplete, subscribe = false, ...additionalParams} = {}) => {
 		const req = new LS2Request();
 		req.send({
-			service: 'luna://com.webos.service.applicationmanager',
+			service: 'luna://' + service,
 			method,
 			parameters: Object.assign({}, params, additionalParams),
 			onSuccess: handler(onSuccess, map),
@@ -34,33 +35,18 @@ const luna =  (
 	}
 );
 
-// For full spec and accepted options, see:
-// https://wiki.lgsvl.com/display/webOSDocs/com.webos.service.applicationmanager+v4.1
 const LunaProvider = {
-	// Launch Point
-	addLaunchPoint: luna('addLaunchPoint'),
-	moveLaunchPoint: luna('moveLaunchPoint'),
-	updateLaunchPoint: luna('updateLaunchPoint'),
-	removeLaunchPoint: luna('removeLaunchPoint'),
-	listLaunchPoints: luna('listLaunchPoints'), // subscribable
+	// Device information
+	getKnownBluetoothDevices: luna('com.webos.service.bluetooth2', 'device/getStatus'),
+	getBluetoothStatus: luna('com.webos.service.bluetooth2', 'a2dp/getStatus'),
+	queryAvailable: luna('com.webos.service.bluetooth2', 'adapter/queryAvailable'),
 
-	// Application
-	listApps: luna('listApps'), // subscribable
-	running: luna('running'), // subscribable,
-	getForegroundAppInfo: luna('getForegroundAppInfo'),  // subscribable
-	setOrder: luna('setOrder'),
+	// Device volume
+	getRemoteVolume: luna('com.webos.service.bluetooth2', 'avrcp/getRemoteVolume'),
+	setAbsoluteVolume: luna('com.webos.service.bluetooth2', 'avrcp/setAbsoluteVolume'),
 
 	// Application Handling
-	launch: luna('launch'),
-	pause: luna('pause'),
-	close: luna('close'),
-	closeByAppId: luna('closeByAppId'),
-
-	// Application Specific
-	getAppInfo: luna('getAppInfo'),
-	getAppLifeStatus: luna('getAppLifeStatus'),  // subscribable
-	getAppLifeEvents: luna('getAppLifeEvents'), // subscribable
-	getAppStatus: luna('getAppStatus') // subscribable
+	launch: luna('com.webos.service.applicationmanager', 'launch', {id: 'com.webos.app.volume'})
 };
 
 export default LunaProvider;

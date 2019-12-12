@@ -5,6 +5,6 @@ const __MOCK__ = (process.env.REACT_APP_SERVICE_PROVIDER === 'Mock');
 
 export default provider;
 export {
-	provider,
-	__MOCK__
+	__MOCK__,
+	provider
 };

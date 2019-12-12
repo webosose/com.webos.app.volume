@@ -1,7 +1,7 @@
 {
 	"id": "com.webos.app.volume",
-	"version": "0.2.0",
-	"vendor": "LGE-SVL",
+	"version": "0.3.0",
+	"vendor": "LGE-SWP",
 	"type": "web",
 	"main": "index.html",
 	"title": "Enact Volume Control",
@@ -13,6 +13,9 @@
 		"all"
 	],
 	"trustLevel": "trusted",
+	"accessibility": {
+		"supportsAudioGuidance": true
+	},
 	"defaultWindowType": "system_ui",
 	"noSplashOnLaunch": true,
 	"spinnerOnLaunch": false,

@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
 
-import {__MOCK__} from '../service';
+import Service, {__MOCK__} from '../service';
 import VolumeControls from '../views/VolumeControls';
 
 import initialState from './initialState';
@@ -19,6 +19,7 @@ const AppBase = kind({
 	name: 'App',
 
 	propTypes: {
+		onHandleHide: PropTypes.func,
 		onHideVolumeControl: PropTypes.func,
 		onShowVolumeControl: PropTypes.func,
 		volumeControlVisible: PropTypes.bool
@@ -35,6 +36,7 @@ const AppBase = kind({
 	},
 
 	render: ({
+		onHandleHide,
 		onHideVolumeControl,
 		onShowVolumeControl,
 		volumeControlVisible,
@@ -45,7 +47,7 @@ const AppBase = kind({
 				<Transition css={css} type="fade" visible={volumeControlVisible}>
 					<div className={css.basement} onClick={onHideVolumeControl} />
 				</Transition>
-				<Transition css={css} direction="up" visible={volumeControlVisible} >
+				<Transition css={css} direction="up" onHide={onHandleHide} visible={volumeControlVisible} >
 					<VolumeControls />
 				</Transition>
 				{__MOCK__ && (
@@ -67,7 +69,83 @@ const AppDecorator = compose(
 		state: initialState()
 	}),
 	ConsumerDecorator({
+		mount: (props, {update}) => {
+			const adaptersAddress = [];
+			let
+				displayAffinity = 0,
+				isDualAdapters = false;
+			if ((window !== 'undefined') && window.webOSSystem && window.webOSSystem.launchParams && window.webOSSystem.launchParams.hasOwnProperty('displayAffinity')) {
+				displayAffinity = JSON.parse(window.webOSSystem.launchParams).displayAffinity || 0;
+				Service.queryAvailable({
+					onSuccess: ({adapters}) => {
+						for (let i = 0; i < adapters.length; i++) {
+							const adapter = adapters[i];
+							adaptersAddress[adapter.default ? 0 : 1] = adapter.adapterAddress;
+							if (!adapter.default) {
+								isDualAdapters = true;
+							}
+						}
+					}
+				});
+			}
+			Service.getKnownBluetoothDevices({
+				onSuccess: ({devices}) => {
+					let isConnected = false;
+					for (let i = 0; i < devices.length; i++) {
+						const device = devices[i];
+						if (device.connectedProfiles.length > 0) {
+							if (isDualAdapters && (adaptersAddress[displayAffinity] !== device.adapterAddress)) {
+								continue;
+							}
+							update(({bluetooth}) => {
+								bluetooth.address = device.address;
+								bluetooth.connected = true;
+							});
+							Service.getRemoteVolume({
+								address: device.address,
+								onSuccess: (param) => {
+									if (param.hasOwnProperty('volume')) {
+										if (document.hidden) {
+											Service.launch();
+										}
+										update(({app, volume}) => {
+											app.visible.volumeControl = true;
+											volume.master = param.volume;
+										});
+									}
+								},
+								subscribe: true
+							});
+							isConnected = true;
+							break;
+						}
+					}
+					if (!isConnected) {
+						update(({bluetooth, volume}) => {
+							bluetooth.address = null;
+							bluetooth.connected = false;
+							volume.master = 0;
+
+						});
+					}
+				},
+				subscribe: true
+			});
+
+			document.addEventListener('webOSLocaleChange', () => {
+				window.location.reload();
+			});
+
+			document.addEventListener('webOSRelaunch', () => {
+				update(({app}) => {
+					app.visible.volumeControl = true;
+				});
+			});
+		},
 		handlers: {
+			onHandleHide: () => {
+				window.close();
+			},
 			onHideVolumeControl: (ev, props, {update}) => {
 				update(state => {
 					state.app.visible.volumeControl = false;

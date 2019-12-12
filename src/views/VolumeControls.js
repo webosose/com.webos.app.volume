@@ -1,10 +1,12 @@
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import kind from '@enact/core/kind';
+import $L from '@enact/i18n/$L';
 import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
 
 import VolumeControl from '../components/VolumeControl';
+import Service from '../service';
 
 import css from './VolumeControls.module.less';
 
@@ -12,15 +14,14 @@ const VolumeControlsBase = kind({
 	name: 'VolumeControls',
 
 	propTypes: {
-		onChangeVolumeBluetooth: PropTypes.func.isRequired,
-		onChangeVolumeMaster: PropTypes.func.isRequired,
-		onChangeVolumeMedia: PropTypes.func.isRequired,
-		onChangeVolumeSoundEffect: PropTypes.func.isRequired,
+		bluetoothConnected: PropTypes.bool.isRequired,
+		onChangeMaster: PropTypes.func.isRequired,
+		onChangeMedia: PropTypes.func.isRequired,
+		onChangeSoundEffect: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
-		bluetoothVolume: PropTypes.number,
-		masterVolume: PropTypes.number,
-		mediaVolume: PropTypes.number,
-		soundEffectVolume: PropTypes.number
+		masterValue: PropTypes.number,
+		mediaValue: PropTypes.number,
+		soundEffectValue: PropTypes.number
 	},
 
 	styles: {
@@ -29,14 +30,13 @@ const VolumeControlsBase = kind({
 	},
 
 	render: ({
-		bluetoothVolume,
-		masterVolume,
-		mediaVolume,
-		onChangeVolumeBluetooth,
-		onChangeVolumeMaster,
-		onChangeVolumeMedia,
-		onChangeVolumeSoundEffect,
-		soundEffectVolume,
+		bluetoothConnected,
+		masterValue,
+		mediaValue,
+		onChangeMaster,
+		onChangeMedia,
+		onChangeSoundEffect,
+		soundEffectValue,
 		volumeType,
 		...rest
 	}) => {
@@ -44,13 +44,12 @@ const VolumeControlsBase = kind({
 			<div {...rest}>
 				{volumeType === 'All' ? (
 					<React.Fragment>
-						<VolumeControl label="Master Volume" onChange={onChangeVolumeMaster} value={masterVolume} />
-						<VolumeControl label="Media" onChange={onChangeVolumeMedia} value={mediaVolume} />
-						<VolumeControl label="Sound Effect" onChange={onChangeVolumeSoundEffect} value={soundEffectVolume} />
-						<VolumeControl label="Bluetooth" onChange={onChangeVolumeBluetooth} value={bluetoothVolume} />
+						<VolumeControl disabled={!bluetoothConnected} label={bluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+						<VolumeControl label={$L('Media')} onChange={onChangeMedia} value={mediaValue} />
+						<VolumeControl label={$L('Sound Effect')} onChange={onChangeSoundEffect} value={soundEffectValue} />
 					</React.Fragment>
 				) : (
-					<VolumeControl label="Bluetooth" onChange={onChangeVolumeBluetooth} value={bluetoothVolume} />
+					<VolumeControl disabled={!bluetoothConnected} label={bluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
 				)}
 			</div>
 		);
@@ -60,32 +59,33 @@ const VolumeControlsBase = kind({
 const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onChangeVolumeBluetooth: (ev, props, {update}) => {
-				update(state => {
-					state.volume.bluetooth = ev.value;
+			onChangeMaster: (ev, props, {state, update}) => {
+				if (state.bluetooth.connected) {
+					Service.setAbsoluteVolume({
+						address: state.bluetooth.address,
+						volume: ev.value
+					});
+				}
+				update(({volume}) => {
+					volume.master = ev.value;
 				});
 			},
-			onChangeVolumeMaster: (ev, props, {update}) => {
-				update(state => {
-					state.volume.master = ev.value;
+			onChangeMedia: (ev, props, {update}) => {
+				update(({volume}) => {
+					volume.media = ev.value;
 				});
 			},
-			onChangeVolumeMedia: (ev, props, {update}) => {
-				update(state => {
-					state.volume.media = ev.value;
-				});
-			},
-			onChangeVolumeSoundEffect: (ev, props, {update}) => {
-				update(state => {
-					state.volume.soundEffect = ev.value;
+			onChangeSoundEffect: (ev, props, {update}) => {
+				update(({volume}) => {
+					volume.soundEffect = ev.value;
 				});
 			}
 		},
-		mapStateToProps: ({app, volume}) => ({
-			bluetoothVolume: volume.bluetooth,
-			masterVolume: volume.master,
-			mediaVolume: volume.media,
-			soundEffectVolume: volume.soundEffect,
+		mapStateToProps: ({app, bluetooth, volume}) => ({
+			bluetoothConnected: bluetooth.connected,
+			masterValue: volume.master,
+			mediaValue: volume.media,
+			soundEffectValue: volume.soundEffect,
 			volumeType: app.volumeType
 		})
 	})

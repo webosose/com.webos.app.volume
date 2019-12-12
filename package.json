@@ -1,8 +1,8 @@
 {
 	"name": "com.webos.app.volume",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "webOS Enact Volume Control",
-	"author": "LG SVL",
+	"author": "LG SWP",
 	"main": "src/index.js",
 	"scripts": {
 		"serve": "nodemon --watch .env --exec \"enact serve\"",
@@ -32,13 +32,13 @@
 		"dist/*"
 	],
 	"dependencies": {
-		"@enact/agate": "enactjs/agate#1.0.0-alpha.4",
-		"@enact/core": "^3.0.0",
-		"@enact/i18n": "^3.0.0",
-		"@enact/spotlight": "^3.0.0",
-		"@enact/ui": "^3.0.0",
-		"@enact/webos": "^3.0.0",
-		"ilib": "^14.3.0",
+		"@enact/agate": "enactjs/agate#1.0.0-alpha.8",
+		"@enact/core": "^3.2.5",
+		"@enact/i18n": "^3.2.5",
+		"@enact/spotlight": "^3.2.5",
+		"@enact/ui": "^3.2.5",
+		"@enact/webos": "^3.2.5",
+		"ilib": "^14.4.0",
 		"immer": "^3.2.0",
 		"prop-types": "^15.6.2",
 		"ramda": "^0.26.1",
