@@ -4,9 +4,12 @@ import $L from '@enact/i18n/$L';
 import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
+import {
+	__MOCK__,
+	Bluetooth
+} from 'webos-auto-service';
 
 import VolumeControl from '../components/VolumeControl';
-import Service from '../service';
 
 import css from './VolumeControls.module.less';
 
@@ -14,11 +17,12 @@ const VolumeControlsBase = kind({
 	name: 'VolumeControls',
 
 	propTypes: {
-		bluetoothConnected: PropTypes.bool.isRequired,
+		isBluetoothConnected: PropTypes.bool.isRequired,
 		onChangeMaster: PropTypes.func.isRequired,
 		onChangeMedia: PropTypes.func.isRequired,
 		onChangeSoundEffect: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
+		bluetoothDeviceAddress: PropTypes.string,
 		masterValue: PropTypes.number,
 		mediaValue: PropTypes.number,
 		soundEffectValue: PropTypes.number
@@ -30,7 +34,7 @@ const VolumeControlsBase = kind({
 	},
 
 	render: ({
-		bluetoothConnected,
+		isBluetoothConnected,
 		masterValue,
 		mediaValue,
 		onChangeMaster,
@@ -40,16 +44,17 @@ const VolumeControlsBase = kind({
 		volumeType,
 		...rest
 	}) => {
+		delete rest.bluetoothDeviceAddress;
 		return (
 			<div {...rest}>
 				{volumeType === 'All' ? (
 					<React.Fragment>
-						<VolumeControl disabled={!bluetoothConnected} label={bluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+						<VolumeControl label={isBluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
 						<VolumeControl label={$L('Media')} onChange={onChangeMedia} value={mediaValue} />
 						<VolumeControl label={$L('Sound Effect')} onChange={onChangeSoundEffect} value={soundEffectValue} />
 					</React.Fragment>
 				) : (
-					<VolumeControl disabled={!bluetoothConnected} label={bluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+					<VolumeControl label={isBluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
 				)}
 			</div>
 		);
@@ -59,10 +64,10 @@ const VolumeControlsBase = kind({
 const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onChangeMaster: (ev, props, {state, update}) => {
-				if (state.bluetooth.connected) {
-					Service.setAbsoluteVolume({
-						address: state.bluetooth.address,
+			onChangeMaster: (ev, props, {update}) => {
+				if (!__MOCK__ && props.isBluetoothConnected) {
+					Bluetooth.setAbsoluteVolume({
+						address: props.bluetoothDeviceAddress,
 						volume: ev.value
 					});
 				}
@@ -81,8 +86,7 @@ const VolumeControlsDecorator = compose(
 				});
 			}
 		},
-		mapStateToProps: ({app, bluetooth, volume}) => ({
-			bluetoothConnected: bluetooth.connected,
+		mapStateToProps: ({app, volume}) => ({
 			masterValue: volume.master,
 			mediaValue: volume.media,
 			soundEffectValue: volume.soundEffect,

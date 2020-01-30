@@ -5,8 +5,8 @@
 	"requires": true,
 	"dependencies": {
 		"@enact/agate": {
-			"version": "github:enactjs/agate#e3c9c5893f3d9130c6240ea94701494f72a9d9a8",
-			"from": "github:enactjs/agate#1.0.0-alpha.7",
+			"version": "github:enactjs/agate#66a46e37d18ee1225c6dd1bcd2e8747d604b6f14",
+			"from": "github:enactjs/agate#1.0.0-alpha.11",
 			"requires": {
 				"@enact/core": "^3.2.0",
 				"@enact/i18n": "^3.2.0",
@@ -2872,6 +2872,14 @@
 			"integrity": "sha1-MuU3fLVy3kqwR1O9+IIcAe1gW3w=",
 			"requires": {
 				"loose-envify": "^1.0.0"
+			}
+		},
+		"webos-auto-service": {
+			"version": "github:enyojs/webos-auto-service#90f44502941a7966db8f7f925e62a776ee3646e9",
+			"from": "github:enyojs/webos-auto-service#0.4.0",
+			"requires": {
+				"@enact/core": "^3.2.4",
+				"@enact/webos": "^3.2.4"
 			}
 		},
 		"whatwg-fetch": {

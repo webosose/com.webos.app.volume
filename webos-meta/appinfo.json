@@ -20,5 +20,6 @@
 	"noSplashOnLaunch": true,
 	"spinnerOnLaunch": false,
 	"transparent": true,
+	"lockable": false,
 	"visible": false
 }
