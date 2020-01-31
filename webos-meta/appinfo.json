@@ -1,6 +1,6 @@
 {
 	"id": "com.webos.app.volume",
-	"version": "0.3.0",
+	"version": "1.0.0",
 	"vendor": "LGE-SWP",
 	"type": "web",
 	"main": "index.html",

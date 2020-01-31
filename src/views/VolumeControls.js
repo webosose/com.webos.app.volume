@@ -14,13 +14,14 @@ import VolumeControl from '../components/VolumeControl';
 import css from './VolumeControls.module.less';
 
 const VolumeControlsBase = kind({
-	name: 'VolumeControls',
+	name: 'VolumeControlsBase',
 
 	propTypes: {
 		isBluetoothConnected: PropTypes.bool.isRequired,
 		onChangeMaster: PropTypes.func.isRequired,
 		onChangeMedia: PropTypes.func.isRequired,
 		onChangeSoundEffect: PropTypes.func.isRequired,
+		onChangeVolume: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
 		bluetoothDeviceAddress: PropTypes.string,
 		masterValue: PropTypes.number,
@@ -33,18 +34,13 @@ const VolumeControlsBase = kind({
 		className: 'volumeControls'
 	},
 
-	render: ({
-		isBluetoothConnected,
-		masterValue,
-		mediaValue,
-		onChangeMaster,
-		onChangeMedia,
-		onChangeSoundEffect,
-		soundEffectValue,
-		volumeType,
-		...rest
-	}) => {
+	render: ({isBluetoothConnected, masterValue, mediaValue, onChangeMaster, onChangeMedia, onChangeSoundEffect, soundEffectValue, volumeType, ...rest}) => {
 		delete rest.bluetoothDeviceAddress;
+		delete rest.onChangeMaster;
+		delete rest.onChangeMedia;
+		delete rest.onChangeSoundEffect;
+		delete rest.onChangeVolume;
+
 		return (
 			<div {...rest}>
 				{volumeType === 'All' ? (
@@ -64,26 +60,29 @@ const VolumeControlsBase = kind({
 const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onChangeMaster: (ev, props, {update}) => {
-				if (!__MOCK__ && props.isBluetoothConnected) {
+			onChangeMaster: ({value}, {bluetoothDeviceAddress, onChangeVolume, isBluetoothConnected}, {update}) => {
+				if (!__MOCK__ && isBluetoothConnected) {
 					Bluetooth.setAbsoluteVolume({
-						address: props.bluetoothDeviceAddress,
-						volume: ev.value
+						address: bluetoothDeviceAddress,
+						volume: value
 					});
 				}
 				update(({volume}) => {
-					volume.master = ev.value;
+					volume.master = value;
 				});
+				onChangeVolume();
 			},
-			onChangeMedia: (ev, props, {update}) => {
+			onChangeMedia: ({value}, {onChangeVolume}, {update}) => {
 				update(({volume}) => {
-					volume.media = ev.value;
+					volume.media = value;
 				});
+				onChangeVolume();
 			},
-			onChangeSoundEffect: (ev, props, {update}) => {
+			onChangeSoundEffect: ({value}, {onChangeVolume}, {update}) => {
 				update(({volume}) => {
-					volume.soundEffect = ev.value;
+					volume.soundEffect = value;
 				});
+				onChangeVolume();
 			}
 		},
 		mapStateToProps: ({app, volume}) => ({

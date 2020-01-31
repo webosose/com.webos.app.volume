@@ -23,6 +23,32 @@ import initialState from './initialState';
 
 import css from './App.module.less';
 
+const
+	BLUETOOTH_STATE = {
+		READY: 0,
+		CONNECTED: 1,
+		DISCONNECTED: 2
+	},
+	delayTohide = 5000;
+
+let hideTimerId = null;
+
+const
+	clearHideTime = () => {
+		if (hideTimerId) {
+			clearTimeout(hideTimerId);
+		}
+	},
+	setHideTime = (update) => {
+		clearHideTime();
+		hideTimerId = setTimeout(() => {
+			update(state => {
+				state.app.visible.type = 'fade';
+				state.app.visible.volumeControl = false;
+			});
+		}, delayTohide);
+	};
+
 const getBluetoothAdapterNumber = (str = '') => {
 	// This variable supports up to 10 maximum number of Bluetooth adapters.
 	// If you have more than 10 adapters, you need to modify the variables.
@@ -32,10 +58,13 @@ const getBluetoothAdapterNumber = (str = '') => {
 
 class AppBase extends React.Component {
 	static propTypes = {
+		onChangeVolume: PropTypes.func,
 		onHandleHide: PropTypes.func,
 		onHideVolumeControl: PropTypes.func,
 		onShowVolumeControl: PropTypes.func,
 		setBluetoothVolume: PropTypes.func,
+		volumeControlRunning: PropTypes.bool,
+		volumeControlType: PropTypes.string,
 		volumeControlVisible: PropTypes.bool
 	}
 
@@ -44,8 +73,10 @@ class AppBase extends React.Component {
 		this.state = {
 			isBluetoothConnected: false
 		};
-		this.displayAffinity = getDisplayAffinity();
-		this.getBluetoothAdapterStatus();
+		if (!__MOCK__) {
+			this.displayAffinity = getDisplayAffinity();
+			this.getBluetoothAdapterStatus();
+		}
 	}
 
 	componentWillUnmount () {
@@ -56,6 +87,7 @@ class AppBase extends React.Component {
 	connectedStatus = []
 	devicesAddress = []
 	displayAffinity = 0
+	hideTimerId = null
 
 	getBluetoothAdapterStatus = () => {
 		requests.getBluetoothAdapter = Bluetooth.getBluetoothAdapter({
@@ -87,7 +119,7 @@ class AppBase extends React.Component {
 					continue;
 				}
 				cancelRequest(['getRemoteVolume']);
-				this.connectedStatus[this.displayAffinity] = true;
+				this.connectedStatus[this.displayAffinity] = BLUETOOTH_STATE.READY;
 				this.devicesAddress[this.displayAffinity] = address;
 				requests.getRemoteVolume = Bluetooth.getRemoteVolume({
 					address,
@@ -114,8 +146,12 @@ class AppBase extends React.Component {
 					}
 				});
 			}
-			onShowVolumeControl();
-			setBluetoothVolume(param.volume);
+			if (this.connectedStatus[this.displayAffinity] === BLUETOOTH_STATE.CONNECTED) {
+				onShowVolumeControl();
+				setBluetoothVolume(param.volume);
+			} else {
+				this.connectedStatus[this.displayAffinity] = BLUETOOTH_STATE.CONNECTED;
+			}
 		}
 	}
 
@@ -130,9 +166,12 @@ class AppBase extends React.Component {
 	render () {
 		const {
 			className,
+			onChangeVolume,
 			onHandleHide,
 			onHideVolumeControl,
 			onShowVolumeControl,
+			volumeControlRunning,
+			volumeControlType,
 			volumeControlVisible,
 			...rest
 		} = this.props;
@@ -144,8 +183,8 @@ class AppBase extends React.Component {
 				<Transition css={css} type="fade" visible={volumeControlVisible}>
 					<div className={css.basement} onClick={onHideVolumeControl} />
 				</Transition>
-				<Transition css={css} direction="up" onHide={onHandleHide} visible={volumeControlVisible}>
-					<VolumeControls bluetoothDeviceAddress={this.devicesAddress[this.displayAffinity]} isBluetoothConnected={this.state.isBluetoothConnected} />
+				<Transition css={css} onHide={onHandleHide} type={volumeControlType} visible={volumeControlVisible}>
+					{volumeControlRunning ? <VolumeControls bluetoothDeviceAddress={this.devicesAddress[this.displayAffinity]} isBluetoothConnected={this.state.isBluetoothConnected} onChangeVolume={onChangeVolume} /> : null}
 				</Transition>
 				{__MOCK__ && (
 					<div className={css.control}>
@@ -178,20 +217,38 @@ const AppDecorator = compose(
 					app.visible.volumeControl = true;
 				});
 			});
+
+			update(state => {
+				state.app.running = true;
+			});
+			return () => {
+				clearHideTime();
+			};
 		},
 		handlers: {
-			onHandleHide: () => {
+			onHandleHide: (ev, props, {update}) => {
+				update(state => {
+					state.app.visible.type = 'slide';
+					state.app.running = false;
+				});
 				window.close();
+			},
+			onChangeVolume: (ev, props, {update}) => {
+				setHideTime(update);
 			},
 			onHideVolumeControl: (ev, props, {update}) => {
 				update(state => {
+					state.app.visible.type = 'fade';
 					state.app.visible.volumeControl = false;
 				});
 			},
 			onShowVolumeControl: (ev, props, {update}) => {
 				update(state => {
+					state.app.running = true;
+					state.app.visible.type = 'slide';
 					state.app.visible.volumeControl = true;
 				});
+				setHideTime(update);
 			},
 			setBluetoothVolume: (volume, props, {update}) => {
 				update(state => {
@@ -200,6 +257,8 @@ const AppDecorator = compose(
 			}
 		},
 		mapStateToProps: ({app}) => ({
+			volumeControlRunning: app.running,
+			volumeControlType: app.visible.type,
 			volumeControlVisible: app.visible.volumeControl
 		})
 	})

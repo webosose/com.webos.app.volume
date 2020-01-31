@@ -9,7 +9,9 @@ export default () => ({
 	app: {
 		volumeType: process.env.REACT_APP_VOLUME_TYPE,
 		visible: {
+			type: 'slide',
 			volumeControl: false
-		}
+		},
+		running: false
 	}
 });
