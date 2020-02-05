@@ -5,9 +5,10 @@ import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
 import {
-	__MOCK__,
-	Bluetooth
+	Audio,
+	requests
 } from 'webos-auto-service';
+import {getDisplayAffinity} from 'webos-auto-service/utils/displayAffinity';
 
 import VolumeControl from '../components/VolumeControl';
 
@@ -17,13 +18,11 @@ const VolumeControlsBase = kind({
 	name: 'VolumeControlsBase',
 
 	propTypes: {
-		isBluetoothConnected: PropTypes.bool.isRequired,
 		onChangeMaster: PropTypes.func.isRequired,
 		onChangeMedia: PropTypes.func.isRequired,
 		onChangeSoundEffect: PropTypes.func.isRequired,
 		onChangeVolume: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
-		bluetoothDeviceAddress: PropTypes.string,
 		masterValue: PropTypes.number,
 		mediaValue: PropTypes.number,
 		soundEffectValue: PropTypes.number
@@ -34,8 +33,7 @@ const VolumeControlsBase = kind({
 		className: 'volumeControls'
 	},
 
-	render: ({isBluetoothConnected, masterValue, mediaValue, onChangeMaster, onChangeMedia, onChangeSoundEffect, soundEffectValue, volumeType, ...rest}) => {
-		delete rest.bluetoothDeviceAddress;
+	render: ({masterValue, mediaValue, onChangeMaster, onChangeMedia, onChangeSoundEffect, soundEffectValue, volumeType, ...rest}) => {
 		delete rest.onChangeMaster;
 		delete rest.onChangeMedia;
 		delete rest.onChangeSoundEffect;
@@ -45,30 +43,36 @@ const VolumeControlsBase = kind({
 			<div {...rest}>
 				{volumeType === 'All' ? (
 					<React.Fragment>
-						<VolumeControl label={isBluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+						<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} value={masterValue} />
 						<VolumeControl label={$L('Media')} onChange={onChangeMedia} value={mediaValue} />
 						<VolumeControl label={$L('Sound Effect')} onChange={onChangeSoundEffect} value={soundEffectValue} />
 					</React.Fragment>
 				) : (
-					<VolumeControl label={isBluetoothConnected ? $L('Bluetooth') : $L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+					<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} value={masterValue} />
 				)}
 			</div>
 		);
 	}
 });
 
+
+
 const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
-			onChangeMaster: ({value}, {bluetoothDeviceAddress, onChangeVolume, isBluetoothConnected}, {update}) => {
-				if (!__MOCK__ && isBluetoothConnected) {
-					Bluetooth.setAbsoluteVolume({
-						address: bluetoothDeviceAddress,
-						volume: value
-					});
-				}
+			onChangeMaster: ({value}, {onChangeVolume}, {update}) => {
 				update(({volume}) => {
 					volume.master = value;
+				});
+				requests.setMasterVolume = Audio.setMasterVolume({
+					volume: value,
+					sessionId: getDisplayAffinity(),
+					onSuccess: ({volume}) => {
+						console.log('set master volume = ' + volume);
+					},
+					onFailure: (err) => {
+						console.error(err);
+					}
 				});
 				onChangeVolume();
 			},

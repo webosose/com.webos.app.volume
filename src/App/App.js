@@ -10,9 +10,8 @@ import React from 'react';
 import {
 	__MOCK__,
 	Application,
-	Bluetooth,
+	Audio,
 	cancelAllRequests,
-	cancelRequest,
 	requests
 } from 'webos-auto-service';
 import {getDisplayAffinity} from 'webos-auto-service/utils/displayAffinity';
@@ -24,11 +23,6 @@ import initialState from './initialState';
 import css from './App.module.less';
 
 const
-	BLUETOOTH_STATE = {
-		READY: 0,
-		CONNECTED: 1,
-		DISCONNECTED: 2
-	},
 	delayTohide = 5000;
 
 let hideTimerId = null;
@@ -49,20 +43,13 @@ const
 		}, delayTohide);
 	};
 
-const getBluetoothAdapterNumber = (str = '') => {
-	// This variable supports up to 10 maximum number of Bluetooth adapters.
-	// If you have more than 10 adapters, you need to modify the variables.
-	const bluetoothAdapter = Number(str.slice(-1));
-	return isNaN(bluetoothAdapter) ? 0 : bluetoothAdapter;
-};
-
 class AppBase extends React.Component {
 	static propTypes = {
 		onChangeVolume: PropTypes.func,
 		onHandleHide: PropTypes.func,
 		onHideVolumeControl: PropTypes.func,
 		onShowVolumeControl: PropTypes.func,
-		setBluetoothVolume: PropTypes.func,
+		setMasterVolume: PropTypes.func,
 		volumeControlRunning: PropTypes.bool,
 		volumeControlType: PropTypes.string,
 		volumeControlVisible: PropTypes.bool
@@ -70,12 +57,10 @@ class AppBase extends React.Component {
 
 	constructor (props) {
 		super(props);
-		this.state = {
-			isBluetoothConnected: false
-		};
+		this.state = {};
 		if (!__MOCK__) {
 			this.displayAffinity = getDisplayAffinity();
-			this.getBluetoothAdapterStatus();
+			this.getMasterVolume();
 		}
 	}
 
@@ -83,84 +68,51 @@ class AppBase extends React.Component {
 		cancelAllRequests();
 	}
 
-	adaptersAddress = []
-	connectedStatus = []
-	devicesAddress = []
 	displayAffinity = 0
 	hideTimerId = null
 
-	getBluetoothAdapterStatus = () => {
-		requests.getBluetoothAdapter = Bluetooth.getBluetoothAdapter({
-			onSuccess: this.onSuccessGetBluetoothAdapter,
-			subscribe: true
+	getMasterVolume = () => {
+		requests.getMasterVolume = Audio.getMasterVolume({
+			subscribe: true,
+			sessionId: this.displayAffinity,
+			onSuccess: this.onSuccessGetMasterVolume,
 		});
 	}
 
-	onSuccessGetBluetoothAdapter = ({adapters}) => {
-		this.adaptersAddress = [];
-		for (const {adapterAddress, name} of adapters) {
-			this.adaptersAddress[getBluetoothAdapterNumber(name)] = adapterAddress;
-		}
-		this.searchConnectedDevices();
+/** response sample
+ * {
+		"volumeStatus": {
+			"sessionId": 0,
+			"muted": false,
+			"volume": 100,
+			"soundOutput": "alsa"
+		},
+		"returnValue": true,
+		"callerId": "com.webos.lunasend-1511"
 	}
-
-	searchConnectedDevices = () => {
-		requests.getKnownBluetoothDevices = Bluetooth.getKnownBluetoothDevices({
-			onSuccess: this.onSuccessGetKnownBluetoothDevices,
-			subscribe: true
-		});
-	}
-
-	onSuccessGetKnownBluetoothDevices = ({devices}) => {
-		for (const {adapterAddress, address, connectedProfiles} of devices) {
-			if (connectedProfiles.length > 0) {
-				if ((this.adaptersAddress[this.displayAffinity] !== adapterAddress) &&
-					(this.connectedStatus[this.displayAffinity])) {
-					continue;
-				}
-				cancelRequest(['getRemoteVolume']);
-				this.connectedStatus[this.displayAffinity] = BLUETOOTH_STATE.READY;
-				this.devicesAddress[this.displayAffinity] = address;
-				requests.getRemoteVolume = Bluetooth.getRemoteVolume({
-					address,
-					onSuccess: this.onSuccessGetRemoteVolume,
-					subscribe: true
-				});
-				this.setState({
-					isBluetoothConnected: true
-				});
+ */
+	onSuccessGetMasterVolume = (res) => {
+		const {onShowVolumeControl, setMasterVolume} = this.props;
+		if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
+			if (this.displayAffinity !== res.volumeStatus.sessionId) {
 				return;
 			}
-		}
-		this.resetStatus();
-	}
-
-	onSuccessGetRemoteVolume = (param) => {
-		const {onShowVolumeControl, setBluetoothVolume} = this.props;
-		if (param.hasOwnProperty('volume')) {
 			if (document.hidden) {
 				Application.launch({
 					id: 'com.webos.app.volume',
 					params: {
 						displayAffinity: this.displayAffinity
-					}
+					},
+					keepAlive: true
 				});
 			}
-			if (this.connectedStatus[this.displayAffinity] === BLUETOOTH_STATE.CONNECTED) {
-				onShowVolumeControl();
-				setBluetoothVolume(param.volume);
-			} else {
-				this.connectedStatus[this.displayAffinity] = BLUETOOTH_STATE.CONNECTED;
-			}
+			onShowVolumeControl();
+			setMasterVolume(res.volumeStatus.volume);
 		}
 	}
 
 	resetStatus = () => {
-		this.connectedStatus = [];
-		this.devicesAddress = [];
-		this.setState({
-			isBluetoothConnected: false
-		});
+		this.setState({});
 	}
 
 	render () {
@@ -176,7 +128,7 @@ class AppBase extends React.Component {
 			...rest
 		} = this.props;
 
-		delete rest.setBluetoothVolume;
+		delete rest.setMasterVolume;
 
 		return (
 			<div {...rest} className={classNames(className, css.app, __MOCK__ ? css.withBackground : null)}>
@@ -184,7 +136,7 @@ class AppBase extends React.Component {
 					<div className={css.basement} onClick={onHideVolumeControl} />
 				</Transition>
 				<Transition css={css} onHide={onHandleHide} type={volumeControlType} visible={volumeControlVisible}>
-					{volumeControlRunning ? <VolumeControls bluetoothDeviceAddress={this.devicesAddress[this.displayAffinity]} isBluetoothConnected={this.state.isBluetoothConnected} onChangeVolume={onChangeVolume} /> : null}
+					{volumeControlRunning ? <VolumeControls onChangeVolume={onChangeVolume} /> : null}
 				</Transition>
 				{__MOCK__ && (
 					<div className={css.control}>
@@ -250,7 +202,7 @@ const AppDecorator = compose(
 				});
 				setHideTime(update);
 			},
-			setBluetoothVolume: (volume, props, {update}) => {
+			setMasterVolume: (volume, props, {update}) => {
 				update(state => {
 					state.volume.master = volume;
 				});
