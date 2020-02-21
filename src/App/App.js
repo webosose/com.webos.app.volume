@@ -72,43 +72,37 @@ class AppBase extends React.Component {
 	hideTimerId = null
 
 	getMasterVolume = () => {
+		let prevVolume = 0;
 		requests.getMasterVolume = Audio.getMasterVolume({
 			subscribe: true,
 			sessionId: this.displayAffinity,
-			onSuccess: this.onSuccessGetMasterVolume,
-		});
-	}
+			onSuccess: (res) => {
+				const {onShowVolumeControl, setMasterVolume} = this.props;
+				if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
+					if (this.displayAffinity !== res.volumeStatus.sessionId) {
+						return;
+					}
 
-/** response sample
- * {
-		"volumeStatus": {
-			"sessionId": 0,
-			"muted": false,
-			"volume": 100,
-			"soundOutput": "alsa"
-		},
-		"returnValue": true,
-		"callerId": "com.webos.lunasend-1511"
-	}
- */
-	onSuccessGetMasterVolume = (res) => {
-		const {onShowVolumeControl, setMasterVolume} = this.props;
-		if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
-			if (this.displayAffinity !== res.volumeStatus.sessionId) {
-				return;
+					if (prevVolume === res.volumeStatus.volume) {
+						return;
+					} else {
+						prevVolume = res.volumeStatus.volume;
+					}
+
+					if (document.hidden) {
+						Application.launch({
+							id: 'com.webos.app.volume',
+							params: {
+								displayAffinity: this.displayAffinity
+							},
+							keepAlive: true
+						});
+					}
+					onShowVolumeControl();
+					setMasterVolume(res.volumeStatus.volume);
+				}
 			}
-			if (document.hidden) {
-				Application.launch({
-					id: 'com.webos.app.volume',
-					params: {
-						displayAffinity: this.displayAffinity
-					},
-					keepAlive: true
-				});
-			}
-			onShowVolumeControl();
-			setMasterVolume(res.volumeStatus.volume);
-		}
+		});
 	}
 
 	resetStatus = () => {
@@ -165,9 +159,12 @@ const AppDecorator = compose(
 				window.location.reload();
 			});
 			document.addEventListener('webOSRelaunch', () => {
-				update(({app}) => {
-					app.visible.volumeControl = true;
+				update(state => {
+					state.app.running = true;
+					state.app.visible.type = 'slide';
+					state.app.visible.volumeControl = true;
 				});
+				setHideTime(update);
 			});
 
 			update(state => {
