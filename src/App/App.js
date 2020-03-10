@@ -89,16 +89,16 @@ class AppBase extends React.Component {
 						prevVolume = res.volumeStatus.volume;
 					}
 
-					if (document.hidden) {
-						Application.launch({
-							id: 'com.webos.app.volume',
-							params: {
-								displayAffinity: this.displayAffinity
-							},
-							keepAlive: true
-						});
-					}
-					onShowVolumeControl();
+					// if (document.hidden) {
+					// 	Application.launch({
+					// 		id: 'com.webos.app.volume',
+					// 		params: {
+					// 			displayAffinity: this.displayAffinity
+					// 		},
+					// 		keepAlive: true
+					// 	});
+					// }
+					// onShowVolumeControl();
 					setMasterVolume(res.volumeStatus.volume);
 				}
 			}
