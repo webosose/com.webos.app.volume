@@ -18,5 +18,6 @@
 	"noSplashOnLaunch": true,
 	"spinnerOnLaunch": false,
 	"transparent": true,
+	"keepAlive": true,
 	"uiRevision": 2
 }
