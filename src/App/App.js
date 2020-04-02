@@ -9,10 +9,10 @@ import compose from 'ramda/src/compose';
 import React from 'react';
 import {
 	__MOCK__,
-	Application,
 	Audio,
 	cancelAllRequests,
-	requests
+	requests,
+	cancelRequest
 } from 'webos-auto-service';
 import {getDisplayAffinity} from 'webos-auto-service/utils/displayAffinity';
 
@@ -43,6 +43,26 @@ const
 		}, delayTohide);
 	};
 
+const getMasterVolume = (update) => {
+	requests.getMasterVolume = Audio.getMasterVolume({
+		sessionId: currentDisplayId,
+		onSuccess: (res) => {
+			if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
+				if (res.volumeStatus && res.volumeStatus.volume) {
+					update(state => {
+						state.volume.master = res.volumeStatus.volume;
+					});
+				} else {
+					console.warn(`check response`, res);
+				}
+			}
+		},
+		onComplete: () => {
+			cancelRequest('getMasterVolume');
+		}
+	});
+};
+
 class AppBase extends React.Component {
 	static propTypes = {
 		onChangeVolume: PropTypes.func,
@@ -58,52 +78,13 @@ class AppBase extends React.Component {
 	constructor (props) {
 		super(props);
 		this.state = {};
-		if (!__MOCK__) {
-			this.displayAffinity = getDisplayAffinity();
-			this.getMasterVolume();
-		}
 	}
 
 	componentWillUnmount () {
 		cancelAllRequests();
 	}
 
-	displayAffinity = 0
 	hideTimerId = null
-
-	getMasterVolume = () => {
-		let prevVolume = 0;
-		requests.getMasterVolume = Audio.getMasterVolume({
-			subscribe: true,
-			sessionId: this.displayAffinity,
-			onSuccess: (res) => {
-				const {onShowVolumeControl, setMasterVolume} = this.props;
-				if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
-					if (this.displayAffinity !== res.volumeStatus.sessionId) {
-						return;
-					}
-
-					if (prevVolume === res.volumeStatus.volume) {
-						return;
-					} else {
-						prevVolume = res.volumeStatus.volume;
-					}
-
-					// if (document.hidden) {
-					// 	Application.launch({
-					// 		id: 'com.webos.app.volume',
-					// 		params: {
-					// 			displayAffinity: this.displayAffinity
-					// 		},
-					// 		keepAlive: true
-					// 	});
-					// }
-					// onShowVolumeControl();
-					setMasterVolume(res.volumeStatus.volume);
-				}
-			}
-		});
-	}
 
 	resetStatus = () => {
 		this.setState({});
@@ -154,11 +135,13 @@ const AppDecorator = compose(
 		mount: (props, {update}) => {
 			const currentDisplayId = getDisplayAffinity();
 			document.title = `${document.title} - Display ${currentDisplayId}`;
+			getMasterVolume(update);
 
 			document.addEventListener('webOSLocaleChange', () => {
 				window.location.reload();
 			});
 			document.addEventListener('webOSRelaunch', () => {
+				getMasterVolume(update);
 				update(state => {
 					state.app.running = true;
 					state.app.visible.type = 'slide';

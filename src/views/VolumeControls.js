@@ -61,12 +61,13 @@ const VolumeControlsDecorator = compose(
 	ConsumerDecorator({
 		handlers: {
 			onChangeMaster: ({value}, {onChangeVolume}, {update}) => {
+				const currentDisplayId = getDisplayAffinity();
 				update(({volume}) => {
 					volume.master = value;
 				});
 				requests.setMasterVolume = Audio.setMasterVolume({
+					sessionId: currentDisplayId,
 					volume: value,
-					sessionId: getDisplayAffinity(),
 					onSuccess: ({volume}) => {
 						console.log('set master volume = ' + volume);
 					},
