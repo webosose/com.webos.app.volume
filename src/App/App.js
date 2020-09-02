@@ -44,6 +44,7 @@ const
 	};
 
 const getMasterVolume = (update) => {
+	const currentDisplayId = getDisplayAffinity();
 	requests.getMasterVolume = Audio.getMasterVolume({
 		sessionId: currentDisplayId,
 		onSuccess: (res) => {
