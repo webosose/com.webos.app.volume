@@ -1,20 +1,17 @@
 import AgateDecorator from '@enact/agate/AgateDecorator';
-import Button from '@enact/agate/Button';
 import ConsumerDecorator from '@enact/agate/data/ConsumerDecorator';
 import ProviderDecorator from '@enact/agate/data/ProviderDecorator';
 import Transition from '@enact/ui/Transition';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import compose from 'ramda/src/compose';
 import React from 'react';
 import {
-	__MOCK__,
 	Audio,
 	cancelAllRequests,
 	requests,
 	cancelRequest
-} from 'webos-auto-service';
-import {getDisplayAffinity} from 'webos-auto-service/utils/displayAffinity';
+} from '../services';
+import {getDisplayAffinity} from '../services/utils/displayAffinity';
 
 import VolumeControls from '../views/VolumeControls';
 
@@ -69,7 +66,6 @@ class AppBase extends React.Component {
 		onChangeVolume: PropTypes.func,
 		onHandleHide: PropTypes.func,
 		onHideVolumeControl: PropTypes.func,
-		onShowVolumeControl: PropTypes.func,
 		setMasterVolume: PropTypes.func,
 		volumeControlRunning: PropTypes.bool,
 		volumeControlType: PropTypes.string,
@@ -93,11 +89,9 @@ class AppBase extends React.Component {
 
 	render () {
 		const {
-			className,
 			onChangeVolume,
 			onHandleHide,
 			onHideVolumeControl,
-			onShowVolumeControl,
 			volumeControlRunning,
 			volumeControlType,
 			volumeControlVisible,
@@ -107,18 +101,13 @@ class AppBase extends React.Component {
 		delete rest.setMasterVolume;
 
 		return (
-			<div {...rest} className={classNames(className, css.app, __MOCK__ ? css.withBackground : null)}>
+			<div {...rest} className={css.app}>
 				<Transition css={css} type="fade" visible={volumeControlVisible}>
 					<div className={css.basement} onClick={onHideVolumeControl} />
 				</Transition>
 				<Transition css={css} onHide={onHandleHide} type={volumeControlType} visible={volumeControlVisible}>
 					{volumeControlRunning ? <VolumeControls onChangeVolume={onChangeVolume} /> : null}
 				</Transition>
-				{__MOCK__ && (
-					<div className={css.control}>
-						<Button onClick={onShowVolumeControl}>Open Volume</Button>
-					</div>
-				)}
 			</div>
 		);
 	}
@@ -174,14 +163,6 @@ const AppDecorator = compose(
 					state.app.visible.type = 'fade';
 					state.app.visible.volumeControl = false;
 				});
-			},
-			onShowVolumeControl: (ev, props, {update}) => {
-				update(state => {
-					state.app.running = true;
-					state.app.visible.type = 'slide';
-					state.app.visible.volumeControl = true;
-				});
-				setHideTime(update);
 			},
 			setMasterVolume: (volume, props, {update}) => {
 				update(state => {

@@ -7,7 +7,7 @@ export default () => ({
 	},
 	// General/Global app settings (view management, general app state, etc)
 	app: {
-		volumeType: process.env.REACT_APP_VOLUME_TYPE,
+		volumeType: 'Master',
 		visible: {
 			type: 'slide',
 			volumeControl: false

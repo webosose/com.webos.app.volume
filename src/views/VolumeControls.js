@@ -7,8 +7,8 @@ import React from 'react';
 import {
 	Audio,
 	requests
-} from 'webos-auto-service';
-import {getDisplayAffinity} from 'webos-auto-service/utils/displayAffinity';
+} from '../services';
+import {getDisplayAffinity} from '../services/utils/displayAffinity';
 
 import VolumeControl from '../components/VolumeControl';
 
