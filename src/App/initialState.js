@@ -7,11 +7,12 @@ export default () => ({
 	},
 	// General/Global app settings (view management, general app state, etc)
 	app: {
-		volumeType: 'Master',
+		volumeType: 'Speaker',
 		visible: {
 			type: 'slide',
 			volumeControl: false
 		},
+		touching: false,
 		running: false
 	}
 });

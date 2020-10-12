@@ -66,7 +66,7 @@ class AppBase extends React.Component {
 		onChangeVolume: PropTypes.func,
 		onHandleHide: PropTypes.func,
 		onHideVolumeControl: PropTypes.func,
-		setMasterVolume: PropTypes.func,
+		setMasterVolumeToState: PropTypes.func,
 		volumeControlRunning: PropTypes.bool,
 		volumeControlType: PropTypes.string,
 		volumeControlVisible: PropTypes.bool
@@ -164,10 +164,12 @@ const AppDecorator = compose(
 					state.app.visible.volumeControl = false;
 				});
 			},
-			setMasterVolume: (volume, props, {update}) => {
-				update(state => {
-					state.volume.master = volume;
-				});
+			setMasterVolumeToState: (volume, props, {state, update}) => {
+				if (!state.app.touching) {
+					update(updateState => {
+						updateState.volume.master = volume;
+					});
+				}
 			}
 		},
 		mapStateToProps: ({app}) => ({

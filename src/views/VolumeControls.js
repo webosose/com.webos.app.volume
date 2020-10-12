@@ -22,6 +22,8 @@ const VolumeControlsBase = kind({
 		onChangeMedia: PropTypes.func.isRequired,
 		onChangeSoundEffect: PropTypes.func.isRequired,
 		onChangeVolume: PropTypes.func.isRequired,
+		onTouchStart: PropTypes.func.isRequired,
+		onTouchEnd: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
 		masterValue: PropTypes.number,
 		mediaValue: PropTypes.number,
@@ -33,7 +35,7 @@ const VolumeControlsBase = kind({
 		className: 'volumeControls'
 	},
 
-	render: ({masterValue, mediaValue, onChangeMaster, onChangeMedia, onChangeSoundEffect, soundEffectValue, volumeType, ...rest}) => {
+	render: ({masterValue, mediaValue, onChangeMaster, onChangeMedia, onChangeSoundEffect, onTouchStart, onTouchEnd, soundEffectValue, volumeType, ...rest}) => {
 		delete rest.onChangeMaster;
 		delete rest.onChangeMedia;
 		delete rest.onChangeSoundEffect;
@@ -43,18 +45,17 @@ const VolumeControlsBase = kind({
 			<div {...rest}>
 				{volumeType === 'All' ? (
 					<React.Fragment>
-						<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} value={masterValue} />
-						<VolumeControl label={$L('Media')} onChange={onChangeMedia} value={mediaValue} />
-						<VolumeControl label={$L('Sound Effect')} onChange={onChangeSoundEffect} value={soundEffectValue} />
+						<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} value={masterValue} />
+						<VolumeControl label={$L('Media')} onChange={onChangeMedia} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} value={mediaValue} />
+						<VolumeControl label={$L('Sound Effect')} onChange={onChangeSoundEffect} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} value={soundEffectValue} />
 					</React.Fragment>
 				) : (
-					<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} value={masterValue} />
+					<VolumeControl label={$L('Speaker')} onChange={onChangeMaster} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} value={masterValue} />
 				)}
 			</div>
 		);
 	}
 });
-
 
 
 const VolumeControlsDecorator = compose(
@@ -88,6 +89,16 @@ const VolumeControlsDecorator = compose(
 					volume.soundEffect = value;
 				});
 				onChangeVolume();
+			},
+			onTouchStart: (_, event, {update}) => {
+				update(({app}) => {
+					app.touching = true;
+				});
+			},
+			onTouchEnd: (_, event, {update}) => {
+				update(({app}) => {
+					app.touching = false;
+				});
 			}
 		},
 		mapStateToProps: ({app, volume}) => ({
