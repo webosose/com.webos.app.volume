@@ -45,13 +45,14 @@ const getMasterVolume = (update) => {
 	requests.getMasterVolume = Audio.getMasterVolume({
 		sessionId: currentDisplayId,
 		onSuccess: (res) => {
-			if (res.hasOwnProperty('volumeStatus') && res.returnValue) {
+			if (res.Object.prototype.hasOwnProperty.call('volumeStatus') && res.returnValue) {
 				if (res.volumeStatus && res.volumeStatus.volume) {
 					update(state => {
 						state.volume.master = res.volumeStatus.volume;
 					});
 				} else {
-					console.warn(`check response`, res);
+					/* eslint-disable-next-line no-console */
+					console.warn('check response', res);
 				}
 			}
 		},
@@ -70,7 +71,7 @@ class AppBase extends React.Component {
 		volumeControlRunning: PropTypes.bool,
 		volumeControlType: PropTypes.string,
 		volumeControlVisible: PropTypes.bool
-	}
+	};
 
 	constructor (props) {
 		super(props);
@@ -81,11 +82,11 @@ class AppBase extends React.Component {
 		cancelAllRequests();
 	}
 
-	hideTimerId = null
+	hideTimerId = null;
 
 	resetStatus = () => {
 		this.setState({});
-	}
+	};
 
 	render () {
 		const {
