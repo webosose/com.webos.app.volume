@@ -22,8 +22,8 @@ const VolumeControlsBase = kind({
 		onChangeMedia: PropTypes.func.isRequired,
 		onChangeSoundEffect: PropTypes.func.isRequired,
 		onChangeVolume: PropTypes.func.isRequired,
-		onTouchStart: PropTypes.func.isRequired,
 		onTouchEnd: PropTypes.func.isRequired,
+		onTouchStart: PropTypes.func.isRequired,
 		volumeType: PropTypes.string.isRequired,
 		masterValue: PropTypes.number,
 		mediaValue: PropTypes.number,
@@ -70,9 +70,11 @@ const VolumeControlsDecorator = compose(
 					sessionId: currentDisplayId,
 					volume: value,
 					onSuccess: ({volume}) => {
+						/* eslint-disable-next-line no-console */
 						console.log('set master volume = ' + volume);
 					},
 					onFailure: (err) => {
+						/* eslint-disable-next-line no-console */
 						console.error(err);
 					}
 				});

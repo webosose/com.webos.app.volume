@@ -13,8 +13,8 @@ const VolumeControl = kind({
 	propTypes: {
 		label: PropTypes.string.isRequired,
 		onChange: PropTypes.func.isRequired,
-		onTouchStart: PropTypes.func.isRequired,
 		onTouchEnd: PropTypes.func.isRequired,
+		onTouchStart: PropTypes.func.isRequired,
 		value: PropTypes.number.isRequired
 	},
 
@@ -23,7 +23,7 @@ const VolumeControl = kind({
 		className: 'volumeControl'
 	},
 
-	render: ({className, label, onChange, onTouchStart, onTouchEnd, value}) => {
+	render: ({className, label, onChange, onTouchEnd, onTouchStart, value}) => {
 		return (
 			<Row className={className}>
 				<Cell className={css.label} shrink>
