@@ -45,7 +45,7 @@ const getMasterVolume = (update) => {
 	requests.getMasterVolume = Audio.getMasterVolume({
 		sessionId: currentDisplayId,
 		onSuccess: (res) => {
-			if (res.Object.prototype.hasOwnProperty.call('volumeStatus') && res.returnValue) {
+			if (Object.prototype.hasOwnProperty.call(res,'volumeStatus') && res.returnValue) {
 				if (res.volumeStatus && res.volumeStatus.volume) {
 					update(state => {
 						state.volume.master = res.volumeStatus.volume;
