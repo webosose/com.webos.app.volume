@@ -8,19 +8,26 @@
 	"icon": "icon.png",
 	"miniicon": "icon-mini.png",
 	"largeIcon": "icon-large.png",
-	"uiRevision": 2,
+	"defaultWindowType": "system_ui",
+	"trustLevel": "trusted",
 	"requiredPermissions": [
 		"audio.query",
-		"audio.operation"
+		"audio.operation",
+		"application.launcher",
+		"networkconnection.management",
+		"networkconnection.query",
+		"settings.management",
+		"settings.query",
+		"systemsettings.management",
+		"systemsettings.query",
+		"time.management",
+		"time.query",
+        "wifi.management",
+	    "wifi.query"
 	],
-	"trustLevel": "trusted",
-	"accessibility": {
-		"supportsAudioGuidance": true
-	},
-	"defaultWindowType": "system_ui",
 	"noSplashOnLaunch": true,
 	"spinnerOnLaunch": false,
 	"transparent": true,
-	"lockable": false,
-	"visible": false
+	"visible": false,
+	"uiRevision": 2
 }
