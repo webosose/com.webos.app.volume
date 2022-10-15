@@ -1,28 +1,28 @@
 {
-	"name": "com.webos.app.volume",
+	"name": "volume",
 	"version": "1.0.0",
-	"description": "webOS Enact Volume Control",
-	"author": "LG SWP",
+	"description": "A general template for an Enact Sandstone application.",
+	"author": "",
 	"main": "src/index.js",
 	"scripts": {
-		"serve": "nodemon --watch .env --exec \"enact serve\"",
+		"serve": "enact serve",
 		"pack": "enact pack",
 		"pack-p": "enact pack -p",
 		"watch": "enact pack --watch",
 		"clean": "enact clean",
-		"lint": "enact lint --strict .",
+		"lint": "enact lint .",
 		"license": "enact license",
-		"test": "echo \"No test suite\" && exit 0",
+		"test": "enact test",
 		"test-watch": "enact test --watch"
 	},
-	"license": "Apache-2.0",
+	"license": "UNLICENSED",
 	"private": true,
-	"repository": "https://github.com/enyojs/webos-auto-volume.git",
+	"repository": "",
 	"enact": {
-		"theme": "agate"
+		"theme": "sandstone"
 	},
 	"eslintConfig": {
-		"extends": "enact/strict"
+		"extends": "enact"
 	},
 	"eslintIgnore": [
 		"node_modules/*",
@@ -30,22 +30,18 @@
 		"dist/*"
 	],
 	"dependencies": {
-		"@enact/agate": "^2.0.0",
 		"@enact/core": "^4.5.0",
 		"@enact/i18n": "^4.5.0",
+		"@enact/sandstone": "^2.5.0",
 		"@enact/spotlight": "^4.5.0",
 		"@enact/ui": "^4.5.0",
-		"@enact/webos": "^4.5.0",
-		"classnames": "^2.2.6",
-		"ilib": "^14.4.0",
-		"immer": "^3.2.0",
-		"prop-types": "^15.6.2",
-		"ramda": "^0.26.1",
-		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
-	},
-	"devDependencies": {
-		"cross-env": "^5.2.1",
-		"nodemon": "^1.19.2"
+		"ilib": "^14.14.0",
+		"prop-types": "^15.8.1",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"web-vitals": "^2.1.4",
+		"react-redux": "^7.2.4",
+		"redux": "^4.1.0",
+		"redux-thunk": "^2.3.0"
 	}
 }
