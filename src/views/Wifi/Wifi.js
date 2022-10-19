@@ -45,7 +45,7 @@ const Wifi = () => {
         });
     }, [dispatch])
     return <div className={css.container}>
-        <SwitchItem className={css.switchItem} selected={wifiState} onToggle={onWifiChangeHander}>Wi-Fi</SwitchItem>
+        <SwitchItem className={css.switchItem} disabled selected={wifiState} onToggle={onWifiChangeHander}>Wi-Fi</SwitchItem>
         <VirtualList className={css.wifiList}
             dataSize={wifiList.length}
             itemSize={ri.scale(140)}
