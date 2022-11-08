@@ -1,5 +1,5 @@
 import service from '../services/service';
-import { SET_WIFI_LIST, SET_WIFI_STATUS } from './actionNames';
+import { CLEAR_LOADING, LOADING_WIFI_LIST, SET_WIFI_LIST, SET_WIFI_STATE, SET_WIFI_STATUS } from './actionNames';
 
 export const getWifiStatus = () => (dispatch) => {
     service.getWifiStatus({
@@ -13,7 +13,31 @@ export const getWifiStatus = () => (dispatch) => {
         }
     });
 }
-export const enableWifi = (state) => () => {
+
+export const getWifiState = () => (dispatch) => {
+    service.gettWifiState({
+        subscribe: true,
+        onSuccess: (res) => {
+            console.log('getWifiState res: ', res)
+            if(res.returnValue){
+                dispatch({
+                    type: SET_WIFI_STATE,
+                    payload: (res.status === 'serviceEnabled' || res.status === 'connectionStateChanged')
+                })
+            }           
+        }
+    });
+}
+export const enableWifi = (state) => (dispatch) => {
+    if(state){
+        dispatch({type:LOADING_WIFI_LIST})
+    }else{
+        dispatch({type:CLEAR_LOADING})
+    }    
+    dispatch({
+        type: SET_WIFI_STATE,
+        payload: state
+    })
     service.setWifiState({
         wifi: state ? 'enabled' : 'disabled',
         onSuccess: (res) => {
@@ -31,6 +55,7 @@ export const findWifiNetworks = () => (dispatch) => {
                     type: SET_WIFI_LIST,
                     payload: [...res.foundNetworks]
                 })
+                dispatch({type:CLEAR_LOADING})
                 console.log('findWifiNetworks res: ', res)
             }
         }

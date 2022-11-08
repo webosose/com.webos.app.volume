@@ -52,6 +52,7 @@ const LunaProvider = {
 	// Application Specific
 	getWifiStatus: luna('com.palm.connectionmanager', 'getstatus'),
 	setWifiState: luna('com.palm.connectionmanager', 'setstate'),
+	gettWifiState: luna('com.webos.service.wifi', 'getstatus'),
 	findWifiNetworks: luna('com.palm.wifi', 'findnetworks'),
 	connectingWifi: luna('com.palm.wifi', 'connect'),
 
