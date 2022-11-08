@@ -12,6 +12,7 @@ import Scrim from "../Scrim/Scrim";
 import css from "./ContextualPopupButton.module.less";
 import { useDispatch, useSelector } from "react-redux";
 import launchAction from "../../actions/launchAction";
+import Bluetooth_Disconnect from '../../../assets/Bluetooth_Disconnect.png'
 
 const panels = {
   sound: Sound,
@@ -79,16 +80,30 @@ const ContextualPopupButton = ({ icon }) => {
   }, [closeMenu, icon, menuClick, openSettingsApplication]);
 
   console.log("appState::", appState);
-  return <ContextualPopup
-    icon={icon === 'sound' && volume === 0 ? 'soundmute' : icon}
-    onClick={clickMenu}
-    onClose={closeMenu}
-    open={isOpened}
-    isOpened={isOpened}
-    popupComponent={renderPopup}
-    size="small"
-    direction="above center"
-    noAutoDismiss={false}
-  />
+  if (icon !== 'bluetooth') {
+    return <ContextualPopup
+      icon={icon === 'sound' && volume === 0 ? 'soundmute' : icon}
+      onClick={clickMenu}
+      onClose={closeMenu}
+      open={isOpened}
+      isOpened={isOpened}
+      popupComponent={renderPopup}
+      size="small"
+      direction="above center"
+      noAutoDismiss={false}
+    />
+  } else {
+    return <ContextualPopup
+      icon={Bluetooth_Disconnect}
+      onClick={clickMenu}
+      onClose={closeMenu}
+      open={isOpened}
+      isOpened={isOpened}
+      popupComponent={renderPopup}
+      size="small"
+      direction="above center"
+      noAutoDismiss={false}
+    />
+  }
 }
 export default ContextualPopupButton;
