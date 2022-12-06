@@ -13,6 +13,12 @@ import css from "./ContextualPopupButton.module.less";
 import { useDispatch, useSelector } from "react-redux";
 import launchAction from "../../actions/launchAction";
 import Bluetooth_Disconnect from '../../../assets/Bluetooth_Disconnect.png'
+import Wifi_Connect from '../../../assets/Wifi_Connect.png'
+import Wifi_Disconnect from '../../../assets/Wifi_Disconnect.png'
+import sound from '../../../assets/sound.png';
+import soundmute from '../../../assets/soundmute.png';
+import notification from '../../../assets/notification.png';
+import downloads from '../../../assets/downloads.png';
 
 const panels = {
   sound: Sound,
@@ -29,7 +35,7 @@ const IconButton = kind({
         selected={props.isOpened}
         icon={props.icon}
         onClick={props.onClick}
-        className={css.button_cnt}
+        className={props.icon.includes('sound') || props.icon.includes('Wifi_Connect') ? css.customIcon_Align :css.button_cnt}
         css={css}
       />
     );
@@ -40,7 +46,9 @@ const ContextualPopupButton = ({ icon }) => {
   const appState = useSelector(state => state.appState);
   const [isOpened, setIsOpened] = useState(false);
   const { volume } = useSelector(state => state.volume);
+  const wifiState = useSelector(state => state.wifiState);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!appState) {
       setIsOpened(false);
@@ -60,6 +68,7 @@ const ContextualPopupButton = ({ icon }) => {
     setIsOpened(false);
     dispatch(launchAction('com.palm.app.settings'));
   }, [dispatch]);
+
   const renderPopup = useCallback(() => {
     const Component = panels[icon];
     return (
@@ -79,31 +88,45 @@ const ContextualPopupButton = ({ icon }) => {
     );
   }, [closeMenu, icon, menuClick, openSettingsApplication]);
 
-  console.log("appState::", appState);
-  if (icon !== 'bluetooth') {
-    return <ContextualPopup
-      icon={icon === 'sound' && volume === 0 ? 'soundmute' : icon}
-      onClick={clickMenu}
-      onClose={closeMenu}
-      open={isOpened}
-      isOpened={isOpened}
-      popupComponent={renderPopup}
-      size="small"
-      direction="above center"
-      noAutoDismiss={false}
-    />
-  } else {
-    return <ContextualPopup
-      icon={Bluetooth_Disconnect}
-      onClick={clickMenu}
-      onClose={closeMenu}
-      open={isOpened}
-      isOpened={isOpened}
-      popupComponent={renderPopup}
-      size="small"
-      direction="above center"
-      noAutoDismiss={false}
-    />
+  const renderIcons = () => {
+
+    const mapIcons = {
+      'bluetooth': ['bluetooth', Bluetooth_Disconnect],
+      'wifi4': [Wifi_Connect, Wifi_Disconnect],
+      'sound': [sound, soundmute],
+      'notification': notification,
+      'download': downloads
+    }
+
+    if (icon === 'bluetooth' || icon === 'wifi4') {
+      return <ContextualPopup
+        icon={icon === 'bluetooth' ? mapIcons['bluetooth'][1] : wifiState ? mapIcons['wifi4'][0] : mapIcons['wifi4'][1]}
+        onClick={clickMenu}
+        onClose={closeMenu}
+        open={isOpened}
+        isOpened={isOpened}
+        popupComponent={renderPopup}
+        size="small"
+        direction="above center"
+        noAutoDismiss={false}
+      />
+    } else {
+      return <ContextualPopup
+        icon={icon === 'sound' ? (volume === 0 ? mapIcons['sound'][1] : mapIcons['sound'][0]) : mapIcons[icon]}
+        onClick={clickMenu}
+        onClose={closeMenu}
+        open={isOpened}
+        isOpened={isOpened}
+        popupComponent={renderPopup}
+        size="small"
+        direction="above center"
+        noAutoDismiss={false}
+      />
+    }
   }
+
+  console.log("appState::", appState);
+
+  return renderIcons()
 }
 export default ContextualPopupButton;

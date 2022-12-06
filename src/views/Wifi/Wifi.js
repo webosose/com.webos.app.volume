@@ -47,7 +47,6 @@ const Wifi = () => {
             type: CLEAR_SECURITY_PAGE
         });
     }, [dispatch])
-    console.log("wifiState:: ", wifiState)
     return <div className={css.container}>
         <SwitchItem className={css.switchItem} selected={wifiState} onToggle={onWifiChangeHander}>Wi-Fi</SwitchItem>
         {loadingWifiList ? <div className={css.loadingCnt}>
